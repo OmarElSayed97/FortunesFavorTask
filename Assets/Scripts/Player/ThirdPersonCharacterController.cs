@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class ThirdPersonCharacterController : MonoBehaviour
@@ -24,11 +25,7 @@ public class ThirdPersonCharacterController : MonoBehaviour
     #endregion
 
     #region Integers And Floats
-    [SerializeField]
-    float Speed;
-
-    [SerializeField]
-    float JumpForce;
+   
 
     #endregion
 
@@ -50,11 +47,14 @@ public class ThirdPersonCharacterController : MonoBehaviour
     #endregion
 
     #region Others
-    private Rigidbody rb;
+    private Rigidbody rb_PlayerRigidBody;
     [SerializeField]
     public Player Player;
     [SerializeField]
     public TrailRenderer trail;
+    [SerializeField]
+    Plane TargetPlane;
+    NavMeshAgent PlayerAgent;
     #endregion
 
     #endregion
@@ -70,14 +70,17 @@ public class ThirdPersonCharacterController : MonoBehaviour
     }
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        PlayerAgent = GetComponent<NavMeshAgent>();
+        rb_PlayerRigidBody = GetComponent<Rigidbody>();
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        Move();
+        PlayerAgent.speed = Player.CurrentSpeed;
+        ClickMove();
+        Turning();
         FillBar(LifeBar, Player.Health, Player.HP);
     }
     #endregion
@@ -93,20 +96,34 @@ public class ThirdPersonCharacterController : MonoBehaviour
         transform.Translate(playerMovement, Space.Self);
     }
 
-
-    void Jump()
+    void ClickMove()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            RaycastHit hit;
-            if (IsGrounded)
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit floorHit;
+            if (Physics.Raycast(ray, out floorHit, 100, 1))
             {
-                rb.AddForce(new Vector3(0, 2, 0) * JumpForce, ForceMode.Impulse);
-                IsGrounded = false;
+                PlayerAgent.SetDestination(floorHit.point);
             }
+            
         }
-
     }
+
+    void Turning()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit floorHit;
+
+        if (Physics.Raycast(ray, out floorHit, 100, 1))
+        {
+            Vector3 playerToMouse = floorHit.point - transform.position;
+            playerToMouse.y = 0f;
+            Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
+            rb_PlayerRigidBody.MoveRotation(newRotation);
+        }
+    }
+
 
     void FillBar(Image img, int value, int originalValue)
     {

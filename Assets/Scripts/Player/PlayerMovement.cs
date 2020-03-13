@@ -17,8 +17,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Integers And Floats
-    [SerializeField]
-    float f_Speed = 5;
+  
     #endregion
 
     #region Strings And Enums
@@ -54,25 +53,14 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
+       
         Turning();
     }
     #endregion
 
     #region Methods
 
-    void Move()
-    {
-        float translationZ = Input.GetAxis("Vertical") * f_Speed;
-        float translationX = Input.GetAxis("Horizontal") * f_Speed;
-
-        translationZ *= Time.deltaTime;
-        translationX *= Time.deltaTime;
-
-        transform.Translate(Vector3.forward * translationZ, Space.Self);
-        transform.Translate(Vector3.right * translationX, Space.Self);
-
-    }
+  
 
 
     void Turning()

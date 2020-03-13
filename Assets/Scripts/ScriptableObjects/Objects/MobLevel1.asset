@@ -15,4 +15,5 @@ MonoBehaviour:
   HP: 0
   Attack: 1
   Lifetime: 60
-  Speed: 1
+  Speed: 3
+  MobType: 0

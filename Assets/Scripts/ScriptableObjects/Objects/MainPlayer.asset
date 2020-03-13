@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 50
   Attack: 0
-  Lifetime: 0
-  Speed: 2
+  Lifetime: Infinity
+  Speed: 6
+  Health: 50
+  CurrentSpeed: 6
